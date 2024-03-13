@@ -33,6 +33,23 @@ jobs:
       - name: Trigger Deployment
         if: ${{ github.event_name == 'push' }}
         run: curl https://api.render.com/deploy/srv-${{ secrets.RENDER_SERVICE_ID }}?key=${{ secrets.RENDER_API_KEY }}
+        
+      - name: Build successful
+        uses: rjstone/discord-webhook-notify@v1.0.4
+        if: ${{ success() }}
+        with: 
+          severity: info
+          details: build successful 
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+          
+      - name: Build failed
+        uses: rjstone/discord-webhook-notify@v1.0.4
+        if: ${{ failure() }}
+        with: 
+          severity: error
+          details: build failed - commit ${{ toJson(github.event.commits.id) }} has broken the build.
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+  
 
   tag_release:
     if: ${{ github.event_name == 'push' && !contains(join(toJson(github.event.commits.*.message)), '#skip') }}
@@ -40,7 +57,7 @@ jobs:
     needs: [simple_deployment_pipeline]
     steps:
       - uses: actions/checkout@v4
-      - uses: anothrNick/github-tag-action@1.67.0
+      - uses: anothrNick/github-tag-action@a2c70ae13a881faf2b4953baaa9e49731997ab36
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           WITH_V: true
