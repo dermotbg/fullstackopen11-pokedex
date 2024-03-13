@@ -47,7 +47,7 @@ jobs:
         if: ${{ failure() }}
         with: 
           severity: error
-          details: build failed - commit ${{ toJson(github.event.commits.id) }} has broken the build.
+          details: build failed - commit ${{ github.sha }} has broken the build.
           webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
   
 
