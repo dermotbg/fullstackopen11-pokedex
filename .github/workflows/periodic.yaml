@@ -2,8 +2,7 @@ name: Periodic HealthCheck
 
 on:
   schedule:
-    - cron: '55 8 * * *'
-    - cron: '00 9 * * *'
+    - cron: '*/5 * * * *'
 
 jobs:
   fire_healthcheck:
